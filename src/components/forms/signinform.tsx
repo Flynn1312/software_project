@@ -59,7 +59,7 @@ export function SigninForm() {
             <div className="space-y-2">
               <Label htmlFor="username">Username</Label>
               <Input
-                value="username"
+                id="username"
                 name="username"
                 type="text"
                 placeholder="username"
@@ -70,7 +70,7 @@ export function SigninForm() {
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <Input
-                value="password"
+                id="password"
                 name="password"
                 type="password"
                 placeholder="password"
