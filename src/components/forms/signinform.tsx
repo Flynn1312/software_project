@@ -1,59 +1,52 @@
-"use client";
+"use client"
 
-import Link from "next/link";
+import Link from "next/link"
 import { login } from "@/app/(auth)/login/actions"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation" // Changed from next/router to next/navigation
 
-
-import {
-  CardTitle,
-  CardDescription,
-  CardHeader,
-  CardContent,
-  CardFooter,
-  Card,
-} from "@/components/ui/card";
-
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import React, { useState, useEffect } from "react"
-import { useRouter } from "next/router";
+import { CardTitle, CardDescription, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 
 export function SigninForm() {
-  const Login = () => {
-    const [username, setUsername] = useState("")
-    const [password, setPassword] = useState("")
-    const [error, setError] = useState("")
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
-    const router = useRouter() 
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const router = useRouter()
 
-    useEffect(() => {
-      if (isLoggedIn) {
-        router.push("/dashboard")
-      }
-    }, [isLoggedIn, router])
-
-    async function handleLogin(formData: any) {
-      const res = await login(formData)
-  
-      if (res.error) {
-        setError(res.error)
-        alert(res.error)
-      } else if (res.success) {
-        alert(res.success)
-        setIsLoggedIn(true)
-      }
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.push("/")
     }
-  
-    
+  }, [isLoggedIn, router])
+
+  async function handleSubmit(e: { preventDefault: () => void }) {
+    e.preventDefault()
+    const formData = new FormData()
+    formData.append("username", username)
+    formData.append("password", password)
+
+    const res = await login(formData)
+
+    if (res.error) {
+      setError(res.error)
+      alert(res.error)
+    } else if (res.success) {
+      alert(res.success)
+      setIsLoggedIn(true)
+    }
+  }
+
   return (
     <div className="w-full max-w-md">
-      <form>
+      <form onSubmit={handleSubmit}>
         <Card>
           <CardHeader className="space-y-1">
             <CardTitle className="text-3xl font-bold">Sign In</CardTitle>
-            <CardDescription>
-              Enter your details to sign in to your account
-            </CardDescription>
+            <CardDescription>Enter your details to sign in to your account</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -63,8 +56,9 @@ export function SigninForm() {
                 name="username"
                 type="text"
                 placeholder="username"
+                value={username}
                 onChange={(e) => setUsername(e.target.value)}
-									required
+                required
               />
             </div>
             <div className="space-y-2">
@@ -74,25 +68,27 @@ export function SigninForm() {
                 name="password"
                 type="password"
                 placeholder="password"
+                value={password}
                 onChange={(e) => setPassword(e.target.value)}
-									required
+                required
               />
             </div>
+            {error && <p className="text-red-500 text-sm">{error}</p>}
           </CardContent>
-          <CardFooter className="flex flex-col">
-            <Link href = "/">
-            <button className="w-full">Sign In</button>
-            </Link>
+          <CardFooter>
+            <Button type="submit" className="w-full">
+              Sign In
+            </Button>
           </CardFooter>
         </Card>
-        <div className="mt-4 text-center text-sm">
-          Don't have an account?
-          <Link className="underline ml-2" href="signup">
-            Sign Up
-          </Link>
-        </div>
       </form>
+      <div className="mt-4 text-center text-sm">
+        Don't have an account?
+        <Link className="underline ml-2" href="signup">
+          Sign Up
+        </Link>
+      </div>
     </div>
-  );
+  )
 }
-}
+
