@@ -1,29 +1,5 @@
-"use client"
-import { useRouter } from "next/navigation"
-import { title } from "process"
+import { SigninForm } from "@/components/forms/signinform";
 
 export default function SignInRoute() {
-
-    const router = useRouter()
-
-    const handleButton = () => {
-        router.push("/")
-    }
-
-    return (
-        <div>
-            Sign In Route
-            <h1>
-                Login Page
-            </h1>
-            <button onClick={handleButton}>
-                Home
-            </button>
-        </div>
-    )
-} 
-const config = {
-    plugins: {
-      "@tailwindcss/postcss": {},
-    },
-  };
+    return <SigninForm />
+}
