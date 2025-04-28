@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { login } from "@/app/(auth)/login/actions"
+
 
 import {
   CardTitle,
@@ -13,8 +15,36 @@ import {
 
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import React, { useState, useEffect } from "react"
+import { useRouter } from "next/router";
 
 export function SigninForm() {
+  const Login = () => {
+    const [username, setUsername] = useState("")
+    const [password, setPassword] = useState("")
+    const [error, setError] = useState("")
+    const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const router = useRouter() 
+
+    useEffect(() => {
+      if (isLoggedIn) {
+        router.push("/dashboard")
+      }
+    }, [isLoggedIn, router])
+
+    async function handleLogin(formData: any) {
+      const res = await login(formData)
+  
+      if (res.error) {
+        setError(res.error)
+        alert(res.error)
+      } else if (res.success) {
+        alert(res.success)
+        setIsLoggedIn(true)
+      }
+    }
+  
+    
   return (
     <div className="w-full max-w-md">
       <form>
@@ -27,21 +57,25 @@ export function SigninForm() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="username">Username</Label>
               <Input
-                id="identifier"
-                name="identifier"
+                value="username"
+                name="username"
                 type="text"
-                placeholder="username or email"
+                placeholder="username"
+                onChange={(e) => setUsername(e.target.value)}
+									required
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <Input
-                id="password"
+                value="password"
                 name="password"
                 type="password"
                 placeholder="password"
+                onChange={(e) => setPassword(e.target.value)}
+									required
               />
             </div>
           </CardContent>
@@ -60,4 +94,5 @@ export function SigninForm() {
       </form>
     </div>
   );
+}
 }
