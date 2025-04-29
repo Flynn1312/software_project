@@ -5,6 +5,18 @@ import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 
+export async function GET() {
+    const connection = await createConnection()
+  
+    try {
+      const [columns] = await connection.query("SHOW COLUMNS FROM users")
+      return NextResponse.json({ columns })
+    } catch (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    } finally {
+      connection.end()
+    }
+  }
 export async function login(formData) {
 	"use server"
 
