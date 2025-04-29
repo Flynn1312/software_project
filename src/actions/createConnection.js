@@ -6,7 +6,7 @@ export async function createConnection() {
 		host: "localhost",
 		user: "root",
 		password: "Osborne13!",
-		database: "IndividualProject",
+		database: "idb",
 		port: "3306",
 	})
 
