@@ -1,10 +1,9 @@
-"use client"
+"use server"
 
 import Link from "next/link"
 import { login } from "@/app/(auth)/login/actions"
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation" // Changed from next/router to next/navigation
-
+import { useRouter } from "next/navigation"
 import { CardTitle, CardDescription, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
