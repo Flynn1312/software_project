@@ -17,6 +17,6 @@ export async function queryData(query, params = []) {
 	const connection = await createConnection()
 	const [rows, fields] = await connection.query(query, params)
 	connection.end()
-
+	
 	return rows
 }
