@@ -14,10 +14,7 @@ export async function login(formData) {
 	const connection = await createConnection()
 	const [results, fields] = await connection.query(
 		`
-        SHOW COLUMNS FROM users;
-        
 		SELECT * FROM users
-		WHERE username = ? AND password = ?
 		LIMIT 1;
 	`,
 		[username, password]
