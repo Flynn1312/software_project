@@ -6,7 +6,7 @@ export async function createConnection() {
 		host: "localhost",
 		user: "root",
 		password: "Osborne13!",
-		database: "next_auth",
+		database: "idb",
 		port: "3306",
 	})
 
