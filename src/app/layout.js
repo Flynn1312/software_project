@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "BT Home",
+  title: "Budget Tracker",
 };
 
 export default function RootLayout({ children }) {
