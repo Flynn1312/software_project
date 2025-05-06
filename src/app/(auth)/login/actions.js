@@ -14,7 +14,7 @@ export async function login(formData) {
 	const connection = await createConnection()
 	const [results, fields] = await connection.query(
 		`
-		SELECT * FROM users
+		SELECT * FROM idb.users
         WHERE username = ? AND password = ?
 		LIMIT 1;
 	`,
