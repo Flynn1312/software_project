@@ -10,7 +10,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { useRouter } from "next/navigation"
 import { updateIncome } from "@/actions/updateIncome"
 
-export default function IncomeForm({ username }: { username?: string }) {
+export default function SettingsIncomeForm({ username }: { username?: string }) {
   const [incomeType, setIncomeType] = useState("monthly")
   const [amount, setAmount] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -19,7 +19,9 @@ export default function IncomeForm({ username }: { username?: string }) {
   const [currentUser, setCurrentUser] = useState("")
   const router = useRouter()
 
+  // Try to get username from props or sessionStorage
   useEffect(() => {
+    // Only run this once on initial mount
     if (username) {
       setCurrentUser(username)
     } else if (typeof window !== "undefined") {
@@ -28,7 +30,7 @@ export default function IncomeForm({ username }: { username?: string }) {
         setCurrentUser(storedUsername)
       }
     }
-  }, [])
+  }, []) // Empty dependency array so it only runs once
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -48,12 +50,11 @@ export default function IncomeForm({ username }: { username?: string }) {
     setIsSubmitting(true)
 
     try {
-
       const result = await updateIncome(currentUser, Number.parseFloat(amount), incomeType)
 
       if (result) {
         setSuccess(true)
-        router.push("/setgoal")
+        router.push("/")
       } else {
         console.error("Income update returned false")
         throw new Error("Failed to update income")
@@ -71,7 +72,7 @@ export default function IncomeForm({ username }: { username?: string }) {
       <Card className="w-full max-w-md">
         <form onSubmit={handleSubmit}>
           <CardHeader>
-            <CardTitle>Enter Your Income</CardTitle>
+            <CardTitle>Update Income</CardTitle>
             <CardDescription>
               {currentUser
                 ? `Adding income details for ${currentUser}`
@@ -79,7 +80,6 @@ export default function IncomeForm({ username }: { username?: string }) {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {error && <div className="bg-red-50 text-red-700 p-3 rounded-md text-sm">{error}</div>}
 
             {!username && (
               <div className="space-y-2">

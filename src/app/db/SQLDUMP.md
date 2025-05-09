@@ -14,7 +14,6 @@ CREATE SCHEMA idb;
 CREATE TABLE idb.users(
 username varchar(50) not null,
 name varchar(100) not null,
-business varchar(3) not null,
 password text not null,
 PRIMARY KEY(username))
 ```
@@ -28,6 +27,5 @@ income double not null,
 goal double not null, 
 saved double not null, 
 goal_date text not null, 
-business varchar(3) not null,
 PRIMARY KEY(username))
 ```

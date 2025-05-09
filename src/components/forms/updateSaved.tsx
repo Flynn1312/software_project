@@ -4,18 +4,14 @@ import type React from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { CalendarIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { format } from "date-fns"
-import { updateGoal } from "@/actions/updateGoal"
+import { updateGoal } from "@/actions/amountSaved"
 import { Label } from "@/components/ui/label"
 import { useRouter } from "next/navigation"
-
+// duplicate of goal.tsx but altered to fit this purpose
 
 const usernameFormSchema = z.object({
   username: z.string().min(2, {
@@ -28,13 +24,13 @@ export default function SavingsGoalPage() {
   const [confirmedUsername, setConfirmedUsername] = useState("")
   const router = useRouter()
 
+  // State for the goal form
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState("")
-  const [targetAmount, setTargetAmount] = useState<number | string>("")
   const [currentAmount, setCurrentAmount] = useState<number | string>("")
-  const [deadline, setDeadline] = useState<Date>(new Date())
 
+  // Initialize the username form
   const usernameForm = useForm<z.infer<typeof usernameFormSchema>>({
     resolver: zodResolver(usernameFormSchema),
     defaultValues: {
@@ -42,10 +38,11 @@ export default function SavingsGoalPage() {
     },
   })
 
-  // Try to get username from localStorage 
+  // Try to get username from localStorage on component mount
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedUsername = localStorage.getItem("username")
+      console.log("Stored username from localStorage:", storedUsername)
 
       if (storedUsername && storedUsername.length > 1) {
         usernameForm.setValue("username", storedUsername)
@@ -55,7 +52,7 @@ export default function SavingsGoalPage() {
     }
   }, [usernameForm])
 
-
+  // Handle username submission
   function onUsernameSubmit(values: z.infer<typeof usernameFormSchema>) {
     const { username } = values
 
@@ -71,11 +68,10 @@ export default function SavingsGoalPage() {
     }
 
     // Reset goal form fields
-    setTargetAmount("")
     setCurrentAmount("")
-    setDeadline(new Date())
   }
 
+  // Handle goal form submission
   async function onGoalSubmit(e: React.FormEvent) {
     e.preventDefault()
     setIsSubmitting(true)
@@ -83,15 +79,7 @@ export default function SavingsGoalPage() {
     setSuccess(false)
 
     try {
-      //Make sure inputs are valid
-      const targetAmountNum = typeof targetAmount === 'string' ? 
-        parseFloat(targetAmount) : targetAmount;
-        
-      if (isNaN(targetAmountNum) || targetAmountNum <= 0) {
-        setError("Please enter a valid target amount")
-        setIsSubmitting(false)
-        return
-      }
+      // Validate inputs
 
       const currentAmountNum = typeof currentAmount === 'string' ? 
         parseFloat(currentAmount) : currentAmount;
@@ -104,24 +92,21 @@ export default function SavingsGoalPage() {
 
       console.log("Submitting form with values:", {
         username: confirmedUsername,
-        targetAmount: targetAmountNum,
         currentAmount: currentAmountNum,
-        deadline: deadline.toISOString()
       });
 
       const formData = new FormData()
       formData.append("username", confirmedUsername)
-      formData.append("targetAmount", targetAmountNum.toString())
       formData.append("currentAmount", currentAmountNum.toString())
-      formData.append("deadline", deadline.toISOString())
 
       try {
         const result = await updateGoal(formData)
         
         if (result) {
-          console.log("Goal saved successfully")
           setSuccess(true)
+          
             router.push("/")
+
         } else {
           setError("Failed to save goal")
           console.error("Failed to save goal")
@@ -137,10 +122,10 @@ export default function SavingsGoalPage() {
       setIsSubmitting(false)
     }
   }
-// Gets the ujser to enter their username (had trouble taking the username from the last form)
+
   if (!usernameConfirmed) {
     return (
-      <div className="container mx-auto py-10">
+      <div className="container mx-auto min-h-screen items-center justify-center flex">
         <div className="flex flex-col items-center space-y-6">
           <Card className="w-full max-w-md">
             <CardHeader>
@@ -159,6 +144,8 @@ export default function SavingsGoalPage() {
                         <FormControl>
                           <Input placeholder="Enter your username" {...field} />
                         </FormControl>
+                        <FormDescription>This will be used to save your goal information.</FormDescription>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -175,15 +162,14 @@ export default function SavingsGoalPage() {
     )
   }
 
-
   return (
     <div className="container mx-auto py-10">
       <div className="flex flex-col items-center space-y-6">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle>Savings Goal</CardTitle>
+            <CardTitle>Create a Savings Goal</CardTitle>
             <CardDescription>
-              Setting up a savings goal for user: <span className="font-medium">{confirmedUsername}</span>
+              Set up a new savings goal for user: <span className="font-medium">{confirmedUsername}</span>
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -197,21 +183,6 @@ export default function SavingsGoalPage() {
             <form onSubmit={onGoalSubmit} className="space-y-6">
 
               <div className="space-y-2">
-                <Label htmlFor="targetAmount">Target Amount (£)</Label>
-                <Input
-                  id="targetAmount"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  placeholder="0.00"
-                  value={targetAmount}
-                  onChange={(e) => setTargetAmount(e.target.value)}
-                  required
-                />
-                <p className="text-sm text-muted-foreground">How much do you need to save in total?</p>
-              </div>
-
-              <div className="space-y-2">
                 <Label htmlFor="currentAmount">Current Amount (£)</Label>
                 <Input
                   id="currentAmount"
@@ -223,29 +194,7 @@ export default function SavingsGoalPage() {
                   onChange={(e) => setCurrentAmount(e.target.value)}
                   required
                 />
-                <p className="text-sm text-muted-foreground">How much have you saved so far?</p>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="deadline">Target Date</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button id="deadline" variant={"outline"} className="w-full pl-3 text-left font-normal">
-                      {deadline ? format(deadline, "PPP") : "Select a date"}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={deadline}
-                      onSelect={(date) => date && setDeadline(date)}
-                      disabled={(date) => date < new Date()}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-                <p className="text-sm text-muted-foreground">When do you want to reach your savings goal?</p>
+                <p className="text-sm text-muted-foreground">Enter how much you have saved now</p>
               </div>
 
               <div className="flex space-x-2">

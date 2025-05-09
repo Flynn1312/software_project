@@ -17,15 +17,15 @@ export default function Settings() {
                   Change Goal
                 </Button>
             </Link>
-            <Link href="/income" className="w-full block">
+            <Link href="/settingsincome" className="w-full block">
            <Button type="submit" className="w-full">
                   Change Income
                 </Button> 
                 </Link>
-            <Link href="/" className="w-full block">
-            <Button type="submit" className="w-full">
-                  Change Password
-                </Button>
+            <Link href="/updateSaved" className="w-full block">
+           <Button type="submit" className="w-full">
+                  Update Amount Saved
+                </Button> 
                 </Link>
             <Link href="/" className="w-full block">
             <Button type="submit" className="w-full">
